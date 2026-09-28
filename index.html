@@ -28,19 +28,18 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Fall 2026 Homework 1 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Jason Wang </div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/fa26">cs184.eecs.berkeley.edu/fa26</a>
+		Link to webpage: <a href="https://cal-cs184-student.github.io/hw1-jw-writeup/">https://cal-cs184-student.github.io/hw1-jw-writeup/</a>
 		
 		<br>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/fa26">cs184.eecs.berkeley.edu/fa26</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/hw1-jw-writeup.git">https://github.com/cal-cs184-student/hw1-jw-writeup.git</a>
 
 		<figure>
 			<img src="assets/lion.jpg" alt="Lion" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
 		</figure>
 
 		<!--
@@ -51,62 +50,137 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Rasterizing a triangle begins by taking the three vertices of the triangle. Essentially, we want to determine which pixels 
+		lie inside of the triangle formed by this triangle. We form vectors, one from vertex to vertex (V0 to V1), and one from the 
+		vertex to the center of the pixel (V0 to (x + 0.5, y + 0.5)). By taking the cross product of these two vectors, we can determine which side of the vertex
+		to vertex vector the pixel lies on. Repeating this same test for the other two vertices of the triangle (V1 to V2 and V2 to V0) gives 
+		us our three line test. If all three of those tests return same polarity numbers (positve for counter clock wise, negative for clock wise), 
+		the pixel lies within the triangle, and should be drawn. 
+		<br>
+		<br>
+		This algorithm is further improved by using the bounding box concept. Essentially, we limit the possible pixels to those within
+		the bounding box of the triangle, a box that contains the max and min x and y coordinates of the triangle's vertices. 
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		
 		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="assets/lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="assets/lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="assets/lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="assets/lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
+			<img src = "screenshot_9-26_20-39-13.png" width = "400px">
+			<figcaption>Note the pixelated edges of the triangles made by simple rasterization</figcaption>
 		</div>
 		
 		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Super sampling works by increasing the amount of points that are sampled during the three line test. Instead of just the center 
+		of each pixel, super sampling tests more points in each pixel, like 4, 9, 16, etc... It evaluates the three line test for each 
+		of these points, and calculates the final gradient of the pixel color by the average number of points lying inside of the lines. 
+		This leads to a rather simple modification of the original rasterization pipeline. We add another set of for loops that handle 
+		each pixel and it's sampling. 
+		<br>
+		<br>
+		In the algorithm, it relies on using C++ dynamic arrays to hold the increased data size of our sampling. This serves two purposes:
+		allowing the array to be resized for our changing sample rate (4, 9, 16), as well as serving as a temporary memory buffer before
+		sending the final color to the actual computer screen. This also serves a secondary purpose of saving our data. If two images were
+		sharing an edge, the memory buffer allows us to send the colors of the shapes to the memory buffer before doing the final averaging, 
+		preventing us from either losing data or screen tearing. 
 
+		<div style="display: flex; flex-direction: row; justify-content: center;">
+			<img src = "screenshot_9-26_21-32-1.png" height = "200px">
+			<img src = "screenshot_9-26_21-32-8.png" height = "200px">
+			<img src = "screenshot_9-26_21-32-12.png" height = "200px">
+			
+		</div>
+		<div style = "display: flex; justify-content: center;">As we increase the sample rate, pixels get filled in with gradients and triangles look smoother</div>
 		<h2>Task 3: Transforms</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<img src = "screenshot_9-26_22-14-54.png" width = "400px">
+		</div>
+		I wanted to change the arm position of the cube man so that it looked like that it was waving. This was actually more difficult than
+		I originally expected, because the SVG was setup such that the blocks weren't centered on the joints, but rather somewhere else 
+		(the middle of the block?). Thankfully the solution wasn't that difficult, just had to do some extra math. 
 
 		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		Berycentric coordinates are a unique coordinate system that plots a point relative to the vertices of a shape, rather than 
+		a set origin. In our case, if we use a triangle for example, we'd have a three value cooridnate point that would basically 
+		represent the weight of each vertex. The higher each value, the closer that pixel is to a vertex. Due to the cross product math, 
+		we can actually use this for three line testing byt simply evaluating if those three weights are all positive. Additionally, we 
+		can apply these weights to color gradients, especially if we have a shape where each vertex represents a color. This technique 
+		can result in smooth gradients like in the image below.  
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<img src = "example.svg" width = "400px">
+			<figcaption>Example three color triangle</figcaption>
+		</div>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<img src = "screenshot_9-27_14-31-47.png" width = "400px">
+			<figcaption>Full color wheel</figcaption>
+		</div>
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		Pixel sampling is where you take data from a premade texture, and overlay it onto the new polygon. Typically, something like 
+		a new (U, V) 0 to 1 coordinate system is used, where each vertex of a triangle is assigned a coordinate inside of that box. 
+		Then, we can repeaat the barycentric concept, but instead of making the pixels weighted to colors, they are weighted to 
+		the (U, V) coordinate. Then, you can simply assign this relative cooridnate back to the original texture to fill its color. 
+		<br>
+		<br>
+		However, sometimes the math doesn't assign a pixel to a whole number in the texture coordinates. Therefore we use two 
+		different methods. We can use "Nearest Neighbour", where we simply round the texture coordinates and grab that texture color. 
+		We also have "Bilinear Interpolation", where we look at the closest textures surrounding that fractional coordinate. We then 
+		average out the nearest pixel colors, using weighted averages depending on how close the coordinate is to each color. 
+		<br>
+		<div style="display: flex; flex-direction: row; justify-content: center;">
+			<figure style="margin: 0;">
+        		<img src="screenshot_9-27_15-29-48.png" height="200px">
+        		<figcaption>Nearest Neighbor Sampling</figcaption>
+    		</figure>
+    		<figure style="margin: 0;">
+        		<img src="screenshot_9-27_15-29-51.png" height="200px">
+        		<figcaption>Bilinear Sampling</figcaption>
+    		</figure>
+			
+		</div>
+		<br>
+		<figcaption>Note how Nearest has a lot more black spots, whereas the Bilinear has a much more smooth color</figcaption>
+		<br>
+		The difference between the two sampling methods become a lot more apparent when looking at a micro scale. For example, 
+		using a small texture on a large shape would cause lots of harsh, blocky lines with Nearest Neighbour, whereas Bilinear 
+		would smooth out those lines. 
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+		Level sampling is like an optimization technique, designed to handle images when zoomed out. Typically, trying to use 
+		pixel sampling for a zoomed out shape means one screen pixel could include hundreds or thousands of texture coordinate pixels. 
+		Averaging those is costly and rounding creates blocky, sharp edges. Therefore we create prerendered "levels" of our texture, 
+		each smaller than before, designed to be an averaged version of the previous level of textures. When the image zooms out, 
+		our sampling steps up a level accordingly to the new, smaller texture in order to avoid high memory usage. 
+		<br>
+		<br>
+		Lets consider the effectiveness of different options in pixel sampling, level sampling, and super sampling.
+		<br>
+		<br> 
+		As seen previously, pixel sampling has Nearest and Bilinear. Nearest is the fastest but can cause blocky edges. Bilinear creates more smooth 
+		images, but requires some more math and interpolation calculations. Both of these struggle when dealing with zoomed out images. 
+		<br>
+		<br>
+		Level sampling fixes the previous problems of zooming out. It also deals with Nearest and Bilinear, but in three combinations. 
+		Nearest for both pixels and levels, Bilinear for pixels and Nearest for levels, and Bilinear for both. The math scales the same, 
+		the more bilinear processes involved, the more math computations required. Additionally, to store the prerendered textures more 
+		memory of the computer is comsumed. 
+		<br>
+		<br>
+		 Supersampling has less to do with the technique of texture mapping and more of the original three line test math. Compared 
+		to the two texture sampling methods, supersampling requires quadratic amounts of math and memory to calculate math and store the 
+		results. However, this would be the best brute force solution, as it actively works on the actual edge of the shape rather than
+		just smoothing out the texture overlaid onto the shape. 
+		<br>
+		<div style="display: flex; flex-direction: row; justify-content: center;">
+			<figure style = "margin:0">
+				<img src = "screenshot_9-27_17-57-47.png" height = "200px">
+				<figcaption>Nearest Pixel, No Level</figcaption>
+			</figure>
+			<figure style = "margin:0">
+				<img src = "screenshot_9-27_17-57-49.png" height = "200px">
+				<figcaption>Bilinear Pixel, No Level</figcaption>
+			</figure><figure style = "margin:0">
+				<img src = "screenshot_9-27_17-57-57.png" height = "200px">
+				<figcaption>Nearest Pixel, Nearest Level</figcaption>
+			</figure><figure style = "margin:0">
+				<img src = "screenshot_9-27_17-57-58.png" height = "200px">
+				<figcaption>Bilinear Pixel, Nearest Level</figcaption>
+			</figure>
 		</div>
 	</body>
 </html>

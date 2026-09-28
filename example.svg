@@ -1,0 +1,32 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Red gradient: 100% at the top vertex, fading to 0% at the bottom edge -->
+    <linearGradient id="redGrad" x1="250" y1="50" x2="250" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff0000" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#ff0000" stop-opacity="0"/>
+    </linearGradient>
+    
+    <!-- Green gradient: 100% at the bottom-left vertex, fading to 0% at the opposite edge -->
+    <linearGradient id="greenGrad" x1="50" y1="450" x2="350" y2="250" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00ff00" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#00ff00" stop-opacity="0"/>
+    </linearGradient>
+    
+    <!-- Blue gradient: 100% at the bottom-right vertex, fading to 0% at the opposite edge -->
+    <linearGradient id="blueGrad" x1="450" y1="450" x2="150" y2="250" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0000ff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#0000ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. The Black Base -->
+  <polygon points="250,50 50,450 450,450" fill="#000000" />
+  
+  <!-- 2. The Additive Blending Layer -->
+  <!-- mix-blend-mode: screen adds the overlapping color channels together -->
+  <g style="mix-blend-mode: screen;">
+    <polygon points="250,50 50,450 450,450" fill="url(#redGrad)" />
+    <polygon points="250,50 50,450 450,450" fill="url(#greenGrad)" />
+    <polygon points="250,50 50,450 450,450" fill="url(#blueGrad)" />
+  </g>
+</svg>
